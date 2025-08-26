@@ -1,0 +1,23 @@
+{
+  "name": "price-poller",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc -b",
+    "srart": "node dist/index.js",
+    "dev": "tsc -b && node dist/index.js"
+  },
+  "devDependencies": {
+    "@repo/typescript-config": "workspace:*"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@types/redis": "^4.0.11",
+    "@types/ws": "^8.18.1",
+    "redis": "^5.8.2",
+    "ws": "^8.18.3"
+  }
+}
