@@ -1,0 +1,1 @@
+export const ALL_ASSETS = [ "btcusdt", "solusdt", "ethusdt" ];

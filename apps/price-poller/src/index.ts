@@ -1,7 +1,6 @@
 import WebSocket from "ws";
 import { createClient } from "redis";
-
-const ALL_ASSETS = ["btcusdt", "solusdt"];
+import { ALL_ASSETS } from "@repo/assets/index";
 
 async function main() {
     const ws = new WebSocket("wss://stream.binance.com:9443/ws");
@@ -10,7 +9,6 @@ async function main() {
     });
     
     await publisher.connect();
-    
     
     async function pollData(asset: String){
     
