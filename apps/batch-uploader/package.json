@@ -1,0 +1,23 @@
+{
+  "name": "batch-uploader",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc -b",
+    "srart": "node dist/index.js",
+    "dev": "tsc -b && node dist/index.js",
+    "create-tables": "tsc -b && node dist/admin.js",
+    "listen": "tsc -b && node dist/consumer.js"
+  },
+  "devDependencies": {
+    "@repo/typescript-config": "workspace:*"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "kafkajs": "^2.2.4",
+    "@repo/assets": "workspace:*"
+  }
+}
