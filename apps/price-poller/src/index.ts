@@ -2,6 +2,7 @@ import WebSocket from "ws";
 import { createClient } from "redis";
 import { ALL_ASSETS } from "@repo/assets/index";
 import { Kafka } from "kafkajs";
+import { tradeInterface } from "@repo/types/trade";
 
 const kafka = new Kafka({
     clientId: 'my-app',
@@ -33,15 +34,26 @@ async function main() {
         })
     
         ws.on("message", async (res) => {
-            const data = res.toString();
-            publisher.publish(asset.toString(), data);
-            await producer.send({
-                topic: asset.toString(),
-                messages: [
-                    { value: data },
-                ],
-            })
-            console.log(data)
+            const data_string = res.toString();
+            const data_JSON = JSON.parse(data_string);
+
+            if (data_JSON.s){
+                const data_tosend: tradeInterface = {
+                    symbol: data_JSON.s.toLowerCase(),
+                    price: data_JSON.p,
+                    timeStamp: data_JSON.T,
+                    quantity: data_JSON.q
+                };
+
+                publisher.publish(data_tosend.symbol, JSON.stringify(data_tosend));
+                await producer.send({
+                    topic: data_tosend.symbol,
+                    messages: [
+                        { value: JSON.stringify(data_tosend) },
+                    ],
+                })
+                console.log(data_tosend)
+            }
         })
     
         ws.on("error", (err) => {

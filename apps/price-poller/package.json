@@ -17,6 +17,7 @@
   "license": "ISC",
   "dependencies": {
     "@repo/assets": "workspace:*",
+    "@repo/types": "workspace:*",
     "@types/redis": "^4.0.11",
     "@types/ws": "^8.18.1",
     "kafkajs": "^2.2.4",
