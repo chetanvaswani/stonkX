@@ -17,9 +17,13 @@ async function main(){
     
     await consumer.run({
         eachMessage: async ({ topic, partition, message }) => {
-            console.log({
-                topic, message
-            })
+            if(message.value){
+                const decoder = new TextDecoder('utf-8'); 
+                const data = JSON.parse(decoder.decode(message.value));
+                console.log({
+                    topic, data
+                })
+            }
         },
     })
 }

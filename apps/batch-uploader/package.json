@@ -7,7 +7,6 @@
     "build": "tsc -b",
     "srart": "node dist/index.js",
     "dev": "tsc -b && node dist/index.js",
-    "create-tables": "tsc -b && node dist/admin.js",
     "listen": "tsc -b && node dist/consumer.js"
   },
   "devDependencies": {
