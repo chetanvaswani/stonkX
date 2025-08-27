@@ -6,7 +6,8 @@
   "scripts": {
     "build": "tsc -b",
     "srart": "node dist/index.js",
-    "dev": "tsc -b && node dist/index.js"
+    "dev": "tsc -b && node dist/index.js",
+    "create-tables": "tsc -b && node dist/admin.js"
   },
   "devDependencies": {
     "@repo/typescript-config": "workspace:*"

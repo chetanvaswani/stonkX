@@ -13,7 +13,7 @@ async function main() {
     const publisher = createClient({
         url: "redis://localhost:6379"
     });
-    const producer = kafka.producer()
+    const producer = kafka.producer();
     
     await publisher.connect();
     await producer.connect()
