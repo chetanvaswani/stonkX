@@ -3,14 +3,47 @@ import { ALL_ASSETS } from "@repo/assets/index";
 import { tradeInterface } from "@repo/types/trade";
 import fs from "fs";
 import path from "path";
+import { client } from "@repo/timescaledb";
+import * as pgCopyStreams from "pg-copy-streams";
+const copyFrom = pgCopyStreams.from;
 
 const kafka = new Kafka({
     clientId: 'my-app',
     brokers: ['localhost:9092']
 });
 
-let switchFile = false;
+async function connectDB(){
+    await client.connect()
+}
+connectDB()
 
+async function loadCsvToDb(filePath: string) {
+    const tableName = path.basename(filePath).split("_")[0]; // e.g., btcusdt_0.csv → btcusdt
+    const absolutePath = path.resolve(filePath);
+
+    if (!fs.existsSync(absolutePath)) {
+        console.warn(`File ${absolutePath} not found, skipping.`);
+        return;
+    }
+
+    const copyQuery = `
+        COPY ${tableName} (symbol, price, timestamp, quantity)
+        FROM STDIN WITH CSV HEADER
+    `;
+
+    const stream = client.query(copyFrom(copyQuery));
+    const fileStream = fs.createReadStream(absolutePath);
+
+    return new Promise<void>((resolve, reject) => {
+        fileStream.on("error", reject);
+        stream.on("error", reject);
+        stream.on("finish", () => {
+            console.log(`Loaded file ${filePath} into table ${tableName}`);
+            resolve();
+        });
+        fileStream.pipe(stream);
+    });
+}
 
 let writer_index = Object.fromEntries(
     ALL_ASSETS.map(asset => [asset, 0])
@@ -19,7 +52,14 @@ let writer_index = Object.fromEntries(
 setInterval(() => {
     console.log("switching file")
     writer_index = Object.fromEntries(
-        ALL_ASSETS.map(asset => [asset, Number(!writer_index[asset])])
+        ALL_ASSETS.map((asset) => {
+            loadCsvToDb(`data/${asset}_${writer_index[asset]}.csv`)
+                .then(() => {
+                    fs.writeFileSync(`data/${asset}_${writer_index[asset]}.csv`, HEADERS.join(",") + "\n", "utf8");
+                })
+                .catch(console.error);
+            return [asset, Number(!writer_index[asset])]
+        } )
     );
 }, 15000);
 
@@ -39,48 +79,20 @@ async function main(){
 
                 const decoder = new TextDecoder('utf-8'); 
                 const data = JSON.parse(decoder.decode(message.value));
-                // if (switchFile){
-                //     console.log("switching file")
-                //     writer_index = {
-                //         ...writer_index,
-                //         [data.symbol]: Number(!(writer_index[data.symbol]))
-                //     }
-                // }
 
                 writeMessage(`${topic}_${writer_index[topic]}.csv`, data)
-                // console.log({
-                //     topic, data
-                // })
             }
         },
     })
 }
 
-function ensureDir(dir: string) {
-    if (!fs.existsSync(dir)) {
-      fs.mkdirSync(dir, { recursive: true });
-    }
-}
-  
-
 function writeMessage(fileName: string, data: tradeInterface) {
 
-    // if (Math.random() > 0.5){
-    //     writer_index = {
-    //         ...writer_index,
-    //         [data.symbol]: Number(!(writer_index[data.symbol]))
-    //     }
-    // }
-
     try {
-
         const filePath = path.join("data", fileName);
-        // ensureDir(DATA_DIR);
-    
         const headerLine = HEADERS.join(",") + "\n";
+
         if (!fs.existsSync(filePath)) {
-            // fs.writeFileSync(filePath, headerLine + line, "utf8");
-            // console.log("likh raha hu bkl rukja");
             fs.writeFileSync(`data/${fileName}`, headerLine + Object.values(data).join(",") + "\n", "utf8");
         } else {
             fs.appendFileSync(`data/${fileName}`, Object.values(data).join(",") + "\n", "utf8");
@@ -91,4 +103,4 @@ function writeMessage(fileName: string, data: tradeInterface) {
     }
 }
 
-main()
+main();

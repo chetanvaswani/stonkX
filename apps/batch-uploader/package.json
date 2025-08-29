@@ -1,12 +1,12 @@
 {
-  "name": "batch-uploader",
+  "name": "@repo/batch-uploader",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
     "build": "tsc -b",
     "srart": "node dist/index.js",
-    "dev": "tsc -b && node dist/index.js",
+    "dev": "tsc -b && node dist/consumer.js",
     "listen": "tsc -b && node dist/consumer.js"
   },
   "devDependencies": {
@@ -16,8 +16,12 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "kafkajs": "^2.2.4",
     "@repo/assets": "workspace:*",
-    "@repo/types": "workspace:*"
+    "@repo/timescaledb": "workspace:*",
+    "@repo/types": "workspace:*",
+    "@types/kafkajs": "^1.9.0",
+    "@types/pg-copy-streams": "^1.2.5",
+    "kafkajs": "^2.2.4",
+    "pg-copy-streams": "^7.0.0"
   }
 }
