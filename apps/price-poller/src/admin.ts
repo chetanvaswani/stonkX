@@ -12,12 +12,12 @@ async function main(){
 
     try {
         await admin.connect()
-        // await admin.createTopics({
-        //     topics: ALL_ASSETS.map((asset) => ({
-        //         topic: asset,
-        //         numPartitions: 1,
-        //     })),
-        // });
+        await admin.createTopics({
+            topics: ALL_ASSETS.map((asset) => ({
+                topic: asset,
+                numPartitions: 1,
+            })),
+        });
         const topics = await admin.listTopics();
         console.log(topics)
     } catch(err){

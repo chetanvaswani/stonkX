@@ -36,23 +36,37 @@ async function main() {
         ws.on("message", async (res) => {
             const data_string = res.toString();
             const data_JSON = JSON.parse(data_string);
+            let priceGap = (0.01*Number(data_JSON.p));
+            const GAP_CEILING = 100;
+            if (priceGap > GAP_CEILING){
+                priceGap = GAP_CEILING;
+            }
+
+            // console.log(Number(data_JSON.p) + priceGap)
 
             if (data_JSON.s){
-                const data_tosend: tradeInterface = {
+                const pubSubData: tradeInterface = {
+                    symbol: data_JSON.s.toLowerCase(),
+                    sellPrice: data_JSON.p,
+                    buyPrice: (Number(data_JSON.p) + priceGap),
+                    timeStamp: new Date(data_JSON.T).toISOString(),
+                    quantity: data_JSON.q
+                };
+                const queueData: tradeInterface = {
                     symbol: data_JSON.s.toLowerCase(),
                     price: data_JSON.p,
-                    timeStamp: data_JSON.T,
+                    timeStamp: new Date(data_JSON.T).toISOString(),
                     quantity: data_JSON.q
                 };
 
-                publisher.publish(data_tosend.symbol, JSON.stringify(data_tosend));
+                publisher.publish(pubSubData.symbol, JSON.stringify(pubSubData));
                 await producer.send({
-                    topic: data_tosend.symbol,
+                    topic: queueData.symbol,
                     messages: [
-                        { value: JSON.stringify(data_tosend) },
+                        { value: JSON.stringify(queueData) },
                     ],
                 })
-                console.log(data_tosend)
+                // console.log(queue_data)
             }
         })
     
