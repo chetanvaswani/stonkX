@@ -3,21 +3,22 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
   "exports": {
-    "./": "./src/index.ts"
+    ".": "./dist/index.js"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "populate": "tsc -b && node dist/trade.js",
+    "createViews": "tsc -b && node dist/createMaterialisedViews.js"
+  },
+  "devDependencies": {
+    "@repo/typescript-config": "workspace:*"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@prisma/client": "^6.15.0",
     "@types/pg": "^8.15.5",
     "pg": "^8.16.3"
-  },
-  "devDependencies": {
-    "prisma": "^6.15.0"
   }
 }
