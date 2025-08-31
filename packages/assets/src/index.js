@@ -1,13 +1,8 @@
-export const ALL_ASSETS = [ "btcusdt", "solusdt", "ethusdt" ];
-
-interface assetDetailsInterface{
-    [asset: string]: {
-        name: string,
-        image: string
-    }
-}
-
-export const ASSET_DETAILS: assetDetailsInterface = {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.INTERVALS = exports.ASSET_DETAILS = exports.ALL_ASSETS = void 0;
+exports.ALL_ASSETS = ["btcusdt", "solusdt", "ethusdt"];
+exports.ASSET_DETAILS = {
     "btcusdt": {
         name: "Bitcoin",
         image: "bitcoin-logo.png"
@@ -20,9 +15,8 @@ export const ASSET_DETAILS: assetDetailsInterface = {
         name: "Ethereum",
         image: "ethereum-logo.png"
     }
-}
-
-export const INTERVALS = [
+};
+exports.INTERVALS = [
     "1minute",
     "3minutes",
     "5minutes",

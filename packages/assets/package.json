@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "exports": {
-    "./index": "./src/index.ts"
+    "./index": "./src/index.js"
   },
   "devDependencies": {
     "@repo/typescript-config": "workspace:*"
