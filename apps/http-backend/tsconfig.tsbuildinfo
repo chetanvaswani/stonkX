@@ -1,0 +1,1 @@
+{"root":["./types.d.ts","./src/index.ts","./src/types.ts","./src/middlewear/authentication.ts","./src/middlewear/errorhandler.ts","./src/middlewear/notfound.ts","./src/routes/auth.ts"],"version":"5.9.2"}
