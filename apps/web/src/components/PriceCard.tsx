@@ -35,7 +35,7 @@ export default function PriceCard({buyPrice, asset, sellPrice, increase}: {
                 </div>
                 <div className="flex justify-between items-center">
                     <div className="font-normal text-sm">Ask Price:</div>
-                    <div className={`text-base font-bold ${increase? "text-green-300" : "text-red-300"}`}>
+                    <div className={`text-base font-bold ${increase? "text-green-400" : "text-red-300"}`}>
                         {
                             Number(sellPrice) > 0 ? <span>{sellPrice}</span> : 
                             <Loader />

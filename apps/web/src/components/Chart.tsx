@@ -34,7 +34,6 @@ export default function Chart({selectedAsset, selectedDuration, setSelectedDurat
     const [currentCandles, setCurrentCandles] = useState<any[]>([]);
     const candlestickSeriesRef = useRef<ISeriesApi<"Candlestick"> | null>(null);
 
-
     useEffect(() => {
         const URL = "http://localhost:3001/getCandles";
         const endTime = new Date();
@@ -74,28 +73,24 @@ export default function Chart({selectedAsset, selectedDuration, setSelectedDurat
         const chart = (createChart(chartRef.current, chartOptions));
 
         candlestickSeriesRef.current = (chart.addSeries(CandlestickSeries, {
-            upColor: '#26a69a', downColor: '#ef5350', borderVisible: false,
-            wickUpColor: '#26a69a', wickDownColor: '#ef5350'
+            upColor: '#05df72', downColor: '#ef5350', borderVisible: false,
+            wickUpColor: '#05df72', wickDownColor: '#ef5350'
         }))
-        // candlestickSeriesRef.current.setData([
-        //     ...currentCandles
-        // ])
         chart.timeScale().fitContent();
     }, [])
 
       useEffect(() => {
         if (!candlestickSeriesRef.current) return
         if (currentCandles.length == 0) return
-        console.log(currentCandles)
         candlestickSeriesRef.current.setData((currentCandles as any))
       }, [currentCandles])
 
     return (
-        <div className="h-[50%] border-b-3 border-[#181818] flex flex-col p-3 justify-evenly">
+        <div className="h-full min-h-fit border-b-3 border-[#181818] flex flex-col p-3 justify-evenly">
         <div className="flex gap-5 items-end justify-between h-[5%]">
-          <div className="text-xl font-bold flex items-center gap-2 bg-[#181818] py-1 px-2 rounded-md">
-            <img src={ASSET_DETAILS[selectedAsset].image} className="h-[20px] w-[20px]" />
-            {ASSET_DETAILS[selectedAsset].name}
+          <div className="text-xl font-bold flex items-center gap-2 rounded-md">
+            <img src={ASSET_DETAILS[selectedAsset].image} className="h-[25px] w-[25px]" />
+            {ASSET_DETAILS[selectedAsset].name.toUpperCase()}
           </div>
           <div className="flex gap-1 bg-[#181818] p-1 px-1 rounded-md">
             {

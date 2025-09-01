@@ -3,6 +3,8 @@ import { useEffect, useState, useRef } from "react";
 import { ALL_ASSETS, ASSET_DETAILS, INTERVALS } from "@repo/assets/index";
 import Chart from "@/components/Chart";
 import PriceCard from "@/components/PriceCard";
+import OrderForm from "@/components/OrderForm";
+import Nav from "@/components/Nav";
 
 type Price = {
   prev: number;
@@ -11,7 +13,6 @@ type Price = {
 };
 
 export default function Home() {
-  const chartRef = useRef<HTMLDivElement>(null);
   const [selectedAsset, setSelectedAsset] = useState(ALL_ASSETS[0]);
   const [selectedDuration, setSelectedDuration] = useState("1minute");
   const currPricesRef = useRef<Record<string, Price>>(
@@ -35,6 +36,8 @@ export default function Home() {
           let previous;
           if(prev[asset].sellPrice === 0){
             previous = currPricesRef.current[asset].prev
+          } else if (currPricesRef.current[asset].sellPrice === prev[asset].sellPrice){
+            previous = prev[asset].prev
           } else {
             previous = prev[asset].sellPrice
           }
@@ -48,7 +51,7 @@ export default function Home() {
           ]})
         )
       );
-    }, 500);
+    }, 250);
     return () => clearInterval(interval);
   }, []);
 
@@ -77,19 +80,17 @@ export default function Home() {
             prev: Number(previousPrice.sellPrice),
           }
         })
-        // console.log(currPricesRef.current["solusdt"])
       }
     }
   }, [])
 
 
   return (
-    <div className="h-svh w-screen flex flex-col overflow-x-hidden overflow-y ">
-      <div className="w-full h-[70px] border-b-3 border-[#181818] mx-3 flex items-center">
-        <img src="stonkX_white.png" className="object-contain h-[50%] mr-1" />
-        <div className="text-white text-3xl font-bold mt-2 mr-2">StonkX</div>
-      </div>
-      <div className="w-full flex h-full">
+    <div className="h-svh w-full flex flex-col overflow-x-hidden overflow-y-hidden ">
+      <Nav />
+      <main className="w-full flex h-full">
+
+        {/* left section */}
         <div className="w-[25%] min-w-[300px] py-5 border-r-3 border-[#181818] flex flex-col gap-3 items-center ">
           {
             ALL_ASSETS.map((asset) => {
@@ -103,13 +104,23 @@ export default function Home() {
             })
           }
         </div>
-        <div className="w-full h-full">
-          <Chart selectedAsset={selectedAsset} selectedDuration={selectedDuration} setSelectedDuration={setSelectedDuration}  />
-        </div>
-        <div className="h-full min-w-[25%] border-l-3 border-[#181818]">
 
+        {/* middle section */}
+        <div className="w-full h-full">
+          <div className="h-[50%]">
+            <Chart selectedAsset={selectedAsset} selectedDuration={selectedDuration} setSelectedDuration={setSelectedDuration}  />
+          </div>
+          <div className="h-[50%] p-3">
+              <div className="font-bold">OPEN POSITIONS:</div>
+          </div>
         </div>
-      </div>
+
+        {/* right section */}
+        <div className="h-full min-w-[25%] border-l-3 border-[#181818]">
+          <OrderForm selectedAsset={selectedAsset} />
+        </div>
+
+      </main>
     </div>
   );
 }
