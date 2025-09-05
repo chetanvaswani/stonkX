@@ -1,10 +1,12 @@
 "use client"
 import { useEffect, useState, useRef } from "react";
-import { ALL_ASSETS, ASSET_DETAILS, INTERVALS } from "@repo/assets/index";
+import { ALL_ASSETS } from "@repo/assets/index";
 import Chart from "@/components/Chart";
 import PriceCard from "@/components/PriceCard";
 import OrderForm from "@/components/OrderForm";
 import Nav from "@/components/Nav";
+import { useRouter } from "next/navigation";
+import axios from "axios";
 
 type Price = {
   prev: number;
@@ -13,6 +15,8 @@ type Price = {
 };
 
 export default function Home() {
+  const router = useRouter();
+  const [user, setUser] = useState(null);
   const [selectedAsset, setSelectedAsset] = useState(ALL_ASSETS[0]);
   const [selectedDuration, setSelectedDuration] = useState("1minute");
   const currPricesRef = useRef<Record<string, Price>>(
@@ -26,7 +30,21 @@ export default function Home() {
     }, {} as Record<string, Price>)
   );
   const [visiblePrices, setVisiblePrices] = useState<Record<string, Price>>(currPricesRef.current);
+  const [positionView, setPositionView] = useState<"open" | "pending" | "close">("open")
   const connected = false;
+
+  useEffect(() => {
+    axios.get("http://localhost:3001/api/v1/me", 
+      { withCredentials: true }
+    ).then((res) => {
+      if (res.status === 200){
+        setUser(res.data.data.user)
+      }
+      console.log(res)
+    }).catch(() => {
+      router.push("/signin")
+    })
+  }, [])
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -55,16 +73,12 @@ export default function Home() {
     return () => clearInterval(interval);
   }, []);
 
-  // useEffect(() => {
-  //   console.log(visiblePrices["solusdt"])
-  // }, [visiblePrices])
-
   useEffect(() => {
     if (!connected){
       const socket = new WebSocket('ws://localhost:8080');
       
       socket.onopen = function(event) {
-        console.log('WebSocket connection opened:', event);
+        // console.log('WebSocket connection opened:', event);
       };
   
       socket.onmessage = (event) => {
@@ -87,7 +101,7 @@ export default function Home() {
 
   return (
     <div className="h-svh w-full flex flex-col overflow-x-hidden overflow-y-hidden ">
-      <Nav />
+      <Nav user={user} />
       <main className="w-full flex h-full">
 
         {/* left section */}
@@ -110,8 +124,18 @@ export default function Home() {
           <div className="h-[50%]">
             <Chart selectedAsset={selectedAsset} selectedDuration={selectedDuration} setSelectedDuration={setSelectedDuration}  />
           </div>
-          <div className="h-[50%] p-3">
-              <div className="font-bold">OPEN POSITIONS:</div>
+          <div className="h-[50%] px-3 py-4 ">
+              <div className="w-fit p-2 bg-[#181818] flex items-center justify-evenly rounded-md " >
+                <div onClick={() => {
+                  setPositionView("open")
+                }} className={`px-5 py-1 rounded-md cursor-pointer font-semibold ${positionView === "open" ? "text-white border-1 border-gray-400" : "text-gray-400"}`}>Open Orders</div>
+                <div onClick={() => {
+                  setPositionView("pending")
+                }} className={`px-5 py-1 rounded-md cursor-pointer font-semibold ${positionView === "pending" ? "text-white border-1 border-gray-400" : "text-gray-400"}`}>Pending Orders</div>
+                <div onClick={() => {
+                  setPositionView("close")
+                }} className={`px-5 py-1 rounded-md cursor-pointer font-semibold ${positionView === "close" ? "text-white border-1 border-gray-400" : "text-gray-400"}`} >Closed Orders</div>
+              </div>
           </div>
         </div>
 

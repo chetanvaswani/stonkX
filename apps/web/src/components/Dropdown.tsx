@@ -2,16 +2,15 @@ import {  useState } from "react";
 import { ChevronDown } from "lucide-react";
 
 
-export default function Dropdown({ onChange, options, hidden }: { 
+export default function Dropdown({ onChange, options, hidden, selected }: { 
     onChange: (value: string) => void 
     options: string[],
-    hidden: boolean
+    hidden: boolean,
+    selected: string | null,
 }) {
-  const [selected, setSelected] = useState<string | null>(options[0])
   const [isOpen, setIsOpen] = useState(false);
 
   const handleSelect = (option: string) => {
-    setSelected(option)
     setIsOpen(false);
   };
 

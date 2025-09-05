@@ -30,7 +30,7 @@ export default function Chart({selectedAsset, selectedDuration, setSelectedDurat
 }){
     // const [candlestickSeries, setCandlestickSeries] = useState<ISeriesApi<any> | null>(null);
     const chartRef = useRef<HTMLDivElement>(null);
-    // const [chartInit, setChartInit] = useState(false)
+    const [chartInit, setChartInit] = useState(false);
     const [currentCandles, setCurrentCandles] = useState<any[]>([]);
     const candlestickSeriesRef = useRef<ISeriesApi<"Candlestick"> | null>(null);
 
@@ -41,7 +41,7 @@ export default function Chart({selectedAsset, selectedDuration, setSelectedDurat
         axios.get(`${URL}?asset=${selectedAsset}&duration=${selectedDuration}&startTime=${startTime}&endTime=${endTime}`)
           .then((res) => {
             const candles = res.data.data.candles.reverse(); ;
-            console.log(candles)
+            // console.log(candles)
             setCurrentCandles([
               ...candles.map((candle: any) => {
                 return {
@@ -60,23 +60,28 @@ export default function Chart({selectedAsset, selectedDuration, setSelectedDurat
 
     useEffect(() => {
         if (!chartRef.current) return
-
-        let chartOptions: DeepPartial<ChartOptions>;
-        chartOptions= { 
-            layout: { textColor: 'gray', background: { color: '#0a0a0a' }, panes: { enableResize: true} },
-            grid: { 
-                horzLines: { color: "#181818" },
-                vertLines: { color: "#181818" }
-            } 
-        };
-
-        const chart = (createChart(chartRef.current, chartOptions));
-
-        candlestickSeriesRef.current = (chart.addSeries(CandlestickSeries, {
-            upColor: '#05df72', downColor: '#ef5350', borderVisible: false,
-            wickUpColor: '#05df72', wickDownColor: '#ef5350'
-        }))
-        chart.timeScale().fitContent();
+        if (!chartInit){
+          let chartOptions: DeepPartial<ChartOptions>;
+          chartOptions= { 
+              layout: { textColor: 'gray', background: { color: '#0a0a0a' }, panes: { enableResize: true} },
+              grid: { 
+                  horzLines: { color: "#181818" },
+                  vertLines: { color: "#181818" }
+              } 
+          };
+  
+          const chart = (createChart(chartRef.current, chartOptions));
+  
+          candlestickSeriesRef.current = (chart.addSeries(CandlestickSeries, {
+              upColor: '#05df72', downColor: '#ef5350', borderVisible: false,
+              wickUpColor: '#05df72', wickDownColor: '#ef5350'
+          }))
+          chart.timeScale().fitContent();
+          setChartInit(true)
+        } else {
+          chartRef.current = null
+          setChartInit(false)
+        }
     }, [])
 
       useEffect(() => {

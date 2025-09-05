@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Head from 'next/head';
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
@@ -15,6 +16,11 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "StonkX: give us your money!",
   description: "",
+  icons: {
+    icon: "/stonkX_white.ico",
+    shortcut: "/stonkX_white.ico",
+    apple: "/stonkX_white.ico",
+  },
 };
 
 export default function RootLayout({
