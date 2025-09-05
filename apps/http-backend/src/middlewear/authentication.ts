@@ -1,28 +1,25 @@
 import { Request, Response, NextFunction } from "express";
 import jwt from 'jsonwebtoken';
-
-const secret = process.env.SECRET || "guessmypassword";
+import { JWT_SECRET } from "..";
 
 const auth = async (
     req: Request,
     res: Response,
     next: NextFunction
 ) => {
-    const authHeader = req.headers['authorization'];
-
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
-        res.status(401).json({ message: "Authorization header missing or invalid" });
+    const token = req.cookies.token;
+    if (!token){
+        return res.status(403).json({ msg : "Can not verify user. Token rejected." })
     }
 
-    const token: string = authHeader?.split(' ')[1]!;
-
-    const decoded =  jwt.verify(token, secret)
+    const decoded =  jwt.verify(token, JWT_SECRET);
     if (!decoded ){
         res.status(403).json({ msg : "Can not verify user. Token rejected." })
     }
-    
+    console.log(decoded)
     // @ts-ignore
-    req.userId = decoded.id;
+    req.userId = decoded.userId;
+    console.log(req.userId)
     next();
 }
 

@@ -23,8 +23,8 @@ interface assetBalance {
 }
 
 export interface UserInterface {
-    id: number,
-    username: string,
+    id: string,
+    email: string,
     password: string,
     balance: assetBalance,
     openPositions: PositionInterface[],
